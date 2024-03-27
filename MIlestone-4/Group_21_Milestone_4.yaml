@@ -1,0 +1,1659 @@
+---
+openapi: 3.0.3
+info:
+  title: QuickResolve
+  description: "<br><h3>QuickResolve is a platform that enables effective query redressal. Herein, the students can post their queries and the support staff can resolve the queries. The platform provides additional functionalities such as pinning the queries, reporting, deleting & adding the queries to the FAQ document.The web application is built using the Flask framework & can be easily run on the localhost. </h3><h3>Here we present the API documentation for the designed application.</h3>"
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/ISHANAYAR411/obswe/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://127.0.0.1:5000
+tags:
+- name: User
+  description: Endpoints for defining user operations
+- name: Support_Staff
+  description: Endpoints for defining support staff operations
+- name: Admin
+  description: Endpoints for defining admin operations
+- name: Student
+  description: Endpoints for defining student operations
+- name: FAQ
+  description: Endpoints for defining FAQ operations
+- name: Dashboard
+  description: Endpoints for defining dashboard operations
+paths:
+  /user/adduser/{userid}/{username}/{usertype}/{password}:
+    description: Endpoint to create user accounts
+    post:
+      tags:
+      - User
+      description: Add user to application
+      parameters:
+      - name: userid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 179
+      - name: username
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Joey
+      - name: usertype
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Student
+      - name: password
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 2pizzas@JoeySpecial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/usertype_password_body'
+      responses:
+        "200":
+          description: Request Successful - User Added Successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "403":
+          description: Already Exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_403'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /user/login/{username}/{password}:
+    description: Endpoint to verrify User Credentials to grant access
+    get:
+      tags:
+      - User
+      description: Operation to help user login to access resource.
+      parameters:
+      - name: username
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Joey
+      - name: password
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 2pizzas@JoeySpecial
+      responses:
+        "200":
+          description: Request Successful - User Verrified!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /user/deluser/{username}/{password}:
+    description: Endpoint to delete user account.
+    delete:
+      tags:
+      - User
+      description: Operation to help users delete their account after validating credentials.
+      parameters:
+      - name: username
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Joey
+      - name: password
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: 2pizzas@JoeySpecial
+      responses:
+        "200":
+          description: Request Successful - Account Deleted!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_1'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/announcement/{userid}/{category}/{query}:
+    description: Endpoint to make announcements
+    post:
+      tags:
+      - Support_Staff
+      description: Operation to help make announcements to the class
+      parameters:
+      - name: userid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 179
+      - name: category
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python
+      - name: query
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: There is an error in the GA 4 Q7.. Could you please look into it?
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/category_query_body'
+      responses:
+        "200":
+          description: Request Successful - Ticket Added Successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "403":
+          description: Already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_403_1'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/resolve_ticket/{ticket_id}:
+    description: Endpoint to resolve student queries & update status
+    put:
+      tags:
+      - Support_Staff
+      description: Operation to help support staff resolve queries.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python_12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resolve_ticket_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - Query Resolved!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /admin/add_ticket_to_faq/{ticket_id}:
+    description: Endpoint to add popular queries to the faq doc
+    put:
+      tags:
+      - Admin
+      description: Operation to help support staff resolve queries.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python_12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/add_ticket_to_faq_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - Query Resolved!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /admin/view_thread_to_ticket_map/{thread_id}:
+    description: 'Endpoint to get thread to ticket mapping '
+    get:
+      tags:
+      - Admin
+      description: Operation for admin to see the threads corresponding to tickets
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Thread12345
+      responses:
+        "200":
+          description: Request Successful - ticket id is returned!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_6'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_3'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /admin/view_thread_to_support_staff_map/{thread_id}:
+    description: 'Endpoint to get thread to support staff mapping '
+    get:
+      tags:
+      - Admin
+      description: Operation for admin to see the supportstaff alloted to the thread
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Thread12345
+      responses:
+        "200":
+          description: Request Successful - support staff id is returned!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_7'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_3'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/pin_ticket/{ticket_id}:
+    description: Endpoint to pin important tickets
+    put:
+      tags:
+      - Support_Staff
+      description: Operation to help pin important tickets.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python_12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pin_ticket_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - Query Pinned!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_8'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/report_ticket/{ticket_id}:
+    description: Endpoint to report objectionable tickets
+    put:
+      tags:
+      - Support_Staff
+      description: Operation to help maintain decorum and policy defined by the university.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python_12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/report_ticket_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - Query Reported!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_9'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /admin/delete_ticket/{ticket_id}:
+    description: Endpoint to delete tickets
+    delete:
+      tags:
+      - Admin
+      description: Operation to help delete redundant / objectionable tickets.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python_12345
+      responses:
+        "200":
+          description: Request Successful - Query Deleted!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_10'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/create_ticket/{userid}/{category}/{query}:
+    description: Endpoint to create queries
+    post:
+      tags:
+      - Student
+      description: Operation to help create tickets for student queries
+      parameters:
+      - name: userid
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 179
+      - name: category
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python
+      - name: query
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: There is an error in the GA 4 Q7.. Could you please look into it?
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/category_query_body_1'
+      responses:
+        "200":
+          description: Request Successful - Ticket Added Successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        "403":
+          description: Already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_403_1'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/like_ticket/{ticket_id}:
+    description: Endpoint to like queries
+    put:
+      tags:
+      - Student
+      description: Operation to help students like tickets of interest
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python/12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/like_ticket_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - Ticket Liked Successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_11'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /FAQ/add_ticket/{ticket_id}:
+    description: Endpoint to add popular queries to FAQ doc
+    post:
+      tags:
+      - FAQ
+      description: Operation to help add popular queries to the FAQ document.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python/12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/add_ticket_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - Ticket Added to FAQ Successfully!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_12'
+        "403":
+          description: Already Exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_403_2'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /dashboard/tickets/{category}:
+    description: Endpoint to display all the tickets.
+    get:
+      tags:
+      - Dashboard
+      description: Operation to help users access all the tickets created in the respective categories.
+      parameters:
+      - name: category
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python
+      responses:
+        "200":
+          description: Request Successful - Tickets Returned!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_13'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_4'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/create_thread/{ticket_id}:
+    description: Creating a new thread for the ticket
+    post:
+      tags:
+      - Student
+      description: Creating a new thread for a ticket.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python/12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_thread_ticket_id_body'
+      responses:
+        "200":
+          description: Request Successful - New thread created for the ticket!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_14'
+        "403":
+          description: Already Exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_403_3'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/notify_on_gchat/{ticket_id}:
+    description: Endpoint to notify a ticket on gchat if it has high priority
+    post:
+      tags:
+      - Support_Staff
+      description: Endpoint to notify a ticket on gchat if it has high priority.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: Python_12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/notify_on_gchat_ticket_id_body'
+      responses:
+        "200":
+          description: Message sent to Gchat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_15'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_5'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/notify_on_gchat/{ticket_id}:
+    description: Endpoint to notify a ticket on gchat if it has high priority
+    post:
+      tags:
+      - Student
+      description: Endpoint to notify a ticket on gchat if it has high priority.
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ticket12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/notify_on_gchat_ticket_id_body_1'
+      responses:
+        "200":
+          description: Message sent to Gchat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_15'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_5'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/close_thread/{thread_id}:
+    description: Endpoint to close a thread
+    put:
+      tags:
+      - Student
+      description: Endpoint to close a thread.
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: thread12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/close_thread_thread_id_body'
+      responses:
+        "200":
+          description: Message sent to Gchat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_16'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_6'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/reopen_thread/{thread_id}:
+    description: Endpoint to reopen a closed thread
+    put:
+      tags:
+      - Student
+      description: Endpoint to reopen a closed thread.
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: thread12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reopen_thread_thread_id_body'
+      responses:
+        "200":
+          description: Message sent to Gchat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_17'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_6'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/reopen_thread/{thread_id}:
+    description: Endpoint to reopen a closed thread
+    put:
+      tags:
+      - Support_Staff
+      description: Endpoint to reopen a closed thread.
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: thread12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reopen_thread_thread_id_body_1'
+      responses:
+        "200":
+          description: Message sent to Gchat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_17'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_6'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/close_thread/{thread_id}:
+    description: Endpoint to close a thread
+    put:
+      tags:
+      - Support_Staff
+      description: Endpoint to close a thread.
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: thread12345
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/close_thread_thread_id_body_1'
+      responses:
+        "200":
+          description: Message sent to Gchat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_18'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_6'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/view_notification/{user_id}:
+    description: 'Endpoint to view the notifications '
+    get:
+      tags:
+      - Support_Staff
+      description: Endpoint to view the notifications
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: user1234
+      responses:
+        "200":
+          description: You received a notification from user1234
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_19'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_7'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/view_notification/{user_id}:
+    description: 'Endpoint to view the notifications '
+    get:
+      tags:
+      - Student
+      description: Endpoint to view the notifications
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: user1234
+      responses:
+        "200":
+          description: You received a notification from user1234
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_20'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_7'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /Student/view_discussion_on_discourse/{thread_id}:
+    description: 'Endpoint to view the thread discussion on discourse '
+    get:
+      tags:
+      - Student
+      description: Endpoint to view the thread discussion on discourse
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: thread_1234
+      responses:
+        "200":
+          description: Thread has been redirected to discouse
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_21'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_8'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+  /support_staff/view_discussion_on_discourse/{thread_id}:
+    description: 'Endpoint to view the thread discussion on discourse '
+    get:
+      tags:
+      - Support_Staff
+      description: Endpoint to view the thread discussion on discourse
+      parameters:
+      - name: thread_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: thread_1234
+      responses:
+        "200":
+          description: Thread has been redirected to discouse
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_21'
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404_8'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_500'
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        UserId:
+          type: integer
+          example: 127
+        UserName:
+          type: string
+          example: Joey
+        UserType:
+          type: string
+          example: Student
+        Password:
+          type: string
+          example: 2pizzas@JoeySpecial
+    faq:
+      type: object
+      properties:
+        Q_Id:
+          type: integer
+          example: 34
+        Query:
+          type: string
+          example: What is the quiz 1 syllabus?
+        Solution:
+          type: string
+          example: The Quiz-1 syllabus is from Week 1-4
+        Category:
+          type: string
+          example: Operational
+    ticket:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python/12345
+        Created_by:
+          type: integer
+          example: 179
+        Solved_by:
+          type: integer
+          example: 0
+        Category:
+          type: string
+          example: Python
+        Query:
+          type: string
+          example: There is an error in the GA 4 Q7.. Could you please look into it?
+        Created_at:
+          type: string
+          example: "19th March 2023, 14:30 pm"
+        Solved_at:
+          type: string
+          example: "19th March 2023, 19:47 pm"
+        IsResolved:
+          type: boolean
+          example: false
+        AddFAQ:
+          type: boolean
+          example: false
+        Pin:
+          type: boolean
+          example: false
+        Report:
+          type: boolean
+          example: false
+        Likes:
+          type: integer
+          example: 0
+    usertype_password_body:
+      type: object
+      properties:
+        UserId:
+          type: integer
+          example: 1
+        Username:
+          type: string
+          example: John Doe
+        UserType:
+          type: string
+          example: Support Staff
+        Password:
+          type: string
+          example: 1234@xyz
+    inline_response_200:
+      type: object
+      properties:
+        userid:
+          type: integer
+          example: 179
+        username:
+          type: string
+          example: Joey
+        status:
+          type: string
+          example: User Added Successfully!
+    inline_response_403:
+      type: object
+      properties:
+        status:
+          type: string
+          example: User already exists
+    inline_response_500:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Internal Server Error
+    inline_response_200_1:
+      type: object
+      properties:
+        userid:
+          type: integer
+          example: 179
+        username:
+          type: string
+          example: Joey
+        usertype:
+          type: string
+          example: Student
+        status:
+          type: string
+          example: User Verrified Successfully!
+    inline_response_404:
+      type: object
+      properties:
+        status:
+          type: string
+          example: User does not exist
+    inline_response_200_2:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Account Deleted Successfully!
+    inline_response_404_1:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Account does not exist
+    category_query_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python/12347
+        Created_by:
+          type: integer
+          example: 179
+        Solved_by:
+          type: integer
+          example: -1
+        Category:
+          type: string
+          example: Python
+        Query:
+          type: string
+          example: "Dear All, the live session is scheduled for 20th March, 2023 at 17:30 pm. Kindly join and make the most of teh oppurtunity."
+        Created_at:
+          type: string
+          example: "19th March 2023, 14:30 pm"
+        Solved_at:
+          type: string
+          example: "-1"
+        IsResolved:
+          type: boolean
+          example: true
+        AddFAQ:
+          type: boolean
+          example: false
+        Pin:
+          type: boolean
+          example: true
+        Report:
+          type: boolean
+          example: false
+        Likes:
+          type: integer
+          example: 0
+    inline_response_200_3:
+      type: object
+      properties:
+        userid:
+          type: integer
+          example: 179
+        Ticket_id:
+          type: string
+          example: Joey
+        status:
+          type: string
+          example: Ticket Added Successfully!
+    inline_response_403_1:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Ticket with same query already exists
+    resolve_ticket_ticket_id_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        IsResolved:
+          type: boolean
+          example: true
+        Solution:
+          type: string
+          example: "Dear Student, GA 4 Q7 has been updated on the portal, kindly check."
+        Solved_by:
+          type: integer
+          example: 143
+        Solved_at:
+          type: string
+          example: "19th March 2023, 19:47 pm"
+    inline_response_200_4:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        status:
+          type: string
+          example: Query Resolved Successfully!
+    inline_response_404_2:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Query with given id doesn't exist!
+    add_ticket_to_faq_ticket_id_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        AddFAQ:
+          type: boolean
+          example: true
+    inline_response_200_5:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        status:
+          type: string
+          example: Query Added to FAQ Successfully!
+    inline_response_200_6:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        is_open:
+          type: boolean
+          example: true
+    inline_response_404_3:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Query with given thread id doesn't exist!
+    inline_response_200_7:
+      type: object
+      properties:
+        Support_staff_id:
+          type: string
+          example: id363544
+    pin_ticket_ticket_id_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        Pin:
+          type: boolean
+          example: true
+    inline_response_200_8:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        status:
+          type: string
+          example: Query Pinned successfully!
+    report_ticket_ticket_id_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        Report:
+          type: boolean
+          example: true
+    inline_response_200_9:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        status:
+          type: string
+          example: Query Reported successfully!
+    inline_response_200_10:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python_12345
+        status:
+          type: string
+          example: Query Deleted successfully!
+    category_query_body_1:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python/12345
+        Created_by:
+          type: integer
+          example: 179
+        Solved_by:
+          type: integer
+          example: 0
+        Category:
+          type: string
+          example: Python
+        Query:
+          type: string
+          example: There is an error in the GA 4 Q7.. Could you please look into it?
+        Created_at:
+          type: string
+          example: "19th March 2023, 14:30 pm"
+        Solved_at:
+          type: string
+          example: "19th March 2023, 19:47 pm"
+        IsResolved:
+          type: boolean
+          example: false
+        AddFAQ:
+          type: boolean
+          example: false
+        Pin:
+          type: boolean
+          example: false
+        Report:
+          type: boolean
+          example: false
+        Likes:
+          type: integer
+          example: 0
+        Priority:
+          type: string
+          example: High priority
+        Has_thread:
+          type: boolean
+          example: true
+    like_ticket_ticket_id_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python/12345
+        Likes:
+          type: integer
+          example: 1
+    inline_response_200_11:
+      type: object
+      properties:
+        userid:
+          type: integer
+          example: 179
+        ticket_id:
+          type: string
+          example: Python/12345
+        status:
+          type: string
+          example: Ticket Liked Successfully!
+    add_ticket_ticket_id_body:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python/12345
+        Query:
+          type: string
+          example: What is the quiz-1 syllabus?
+        Solution:
+          type: string
+          example: The Quiz-1 syllabus is Week 1-4.
+    inline_response_200_12:
+      type: object
+      properties:
+        Q_Id:
+          type: integer
+          example: 34
+        status:
+          type: string
+          example: FAQ doc updated Successfully!
+    inline_response_403_2:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Query already exists in FAQs!
+    inline_response_200_13:
+      type: object
+      properties:
+        Ticket_id:
+          type: string
+          example: Python/12345
+        Created_by:
+          type: integer
+          example: 179
+        Solved_by:
+          type: integer
+          example: 0
+        Category:
+          type: string
+          example: Python
+        Query:
+          type: string
+          example: There is an error in the GA 4 Q7.. Could you please look into it?
+        Created_at:
+          type: string
+          example: "19th March 2023, 14:30 pm"
+        Solved_at:
+          type: string
+          example: "19th March 2023, 19:47 pm"
+        IsResolved:
+          type: boolean
+          example: false
+        AddFAQ:
+          type: boolean
+          example: false
+        Pin:
+          type: boolean
+          example: false
+        Report:
+          type: boolean
+          example: false
+        Likes:
+          type: integer
+          example: 0
+    inline_response_404_4:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Tickets do not exist for the given category
+    create_thread_ticket_id_body:
+      type: object
+      properties:
+        ticket_id:
+          type: string
+          example: Python/12345
+    inline_response_200_14:
+      type: object
+      properties:
+        Thread_id:
+          type: string
+          example: Hellothread123
+        status:
+          type: string
+          example: Thread created!
+        ispublic:
+          type: boolean
+          example: true
+        isopen:
+          type: boolean
+          example: false
+    inline_response_403_3:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Thread already Exists.
+    notify_on_gchat_ticket_id_body:
+      type: object
+      properties:
+        ticket_id:
+          type: string
+          example: ticket12345
+        message:
+          type: string
+          example: ticket12345 needs to be adressed immediately.
+        message_url:
+          type: string
+          example: www.gchat.com
+    inline_response_200_15:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Message sent to gchat successfully
+    inline_response_404_5:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Could not notify on gchat!
+    notify_on_gchat_ticket_id_body_1:
+      type: object
+      properties:
+        ticket_id:
+          type: string
+          example: ticket12345
+        message:
+          type: string
+          example: ticket12345 needs to be adressed immediately.
+        message_url:
+          type: string
+          example: www.gchat.com
+    close_thread_thread_id_body:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: thread12345
+    inline_response_200_16:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Thread with id thread12345 closed successfully
+    inline_response_404_6:
+      type: object
+      properties:
+        status:
+          type: string
+          example: No such thread found!
+    reopen_thread_thread_id_body:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: thread12345
+    inline_response_200_17:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Thread with id thread12345    reopened successfully
+    reopen_thread_thread_id_body_1:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: thread12345
+    close_thread_thread_id_body_1:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: thread12345
+    inline_response_200_18:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Thread with id thread12345    is closed successfully
+    inline_response_200_19:
+      type: object
+      properties:
+        Message:
+          type: string
+          example: Ticket has been created by user1234
+    inline_response_404_7:
+      type: object
+      properties:
+        status:
+          type: string
+          example: No notification!
+    inline_response_200_20:
+      type: object
+      properties:
+        Message:
+          type: string
+          example: There's a status for your     ticket by user1234
+    inline_response_200_21:
+      type: object
+      properties:
+        Message:
+          type: string
+          example: The discussion of thread_1234 has been redirected to discourse.
+        status:
+          type: string
+          example: Operation successfull.
+    inline_response_404_8:
+      type: object
+      properties:
+        status:
+          type: string
+          example: No such thread exists.
