@@ -1,0 +1,13 @@
+terminal-1:
+
+./MailHog_linux_amd64
+
+terminal-2:
+
+cd backend
+python3 app.py
+
+terminal-3:
+
+cd frontend
+npm run serve
