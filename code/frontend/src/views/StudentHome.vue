@@ -19,6 +19,7 @@
                 :delete_disabled="false"
                 :edit_disabled="false"
                 :is_resolved="false"
+                :has_thread="ticket.has_thread"
               ></TicketCard>
             </div>
           </div>

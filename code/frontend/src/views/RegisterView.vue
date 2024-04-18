@@ -40,6 +40,16 @@
 
         <b-form-group
           ><b-form-input
+            id="input-discourse-api-key-register"
+            v-model="form.discourse_api_key"
+            type="text"
+            placeholder="Enter Discourse API Key"
+            required
+          ></b-form-input
+        ></b-form-group>
+
+        <b-form-group
+          ><b-form-input
             id="input-email-register"
             v-model="form.email"
             type="email"
@@ -109,6 +119,7 @@ export default {
         email: "",
         password: "",
         retype_password: "",
+        discourse_api_key: "",
       },
       show: true,
     };
@@ -118,6 +129,15 @@ export default {
       event.preventDefault();
       alert('You are creating a new account. Click "Ok" to proceed?');
       this.$log.info("Submitting Registration form");
+
+      // Validate Discourse API key
+      if (!this.validateDiscourseAPIKey()) {
+        // Display error message and return
+        this.flashMessage.error({
+          message: "Invalid Discourse API Key",
+        });
+        return;
+      }
 
       this.form.password = btoa(this.form.password);
       this.form.retype_password = btoa(this.form.retype_password);
@@ -157,11 +177,20 @@ export default {
       this.form.email = "";
       this.form.password = "";
       this.form.retype_password = "";
+      this.form.discourse_api_key = "";
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    validateDiscourseAPIKey() {
+      // Example validation logic for Discourse API key
+      // You can replace this with your actual validation logic
+      const apiKey = this.form.discourse_api_key;
+      // Check if the API key meets your validation criteria
+      // For example, it should be a certain length or match a specific pattern
+      return apiKey.length > 10; // Example: API key should be at least 10 characters long
     },
   },
   computed: {

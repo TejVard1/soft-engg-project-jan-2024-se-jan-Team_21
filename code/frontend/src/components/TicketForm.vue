@@ -64,6 +64,16 @@
 
       <FileUpload @file_uploading="onFileUpload"></FileUpload>
 
+      <b-form-group v-show="user_role == 'student' ? true : false">
+      <b-form-checkbox
+        id="checkbox-create-thread"
+        v-model="form.create_thread"
+        name="create_thread"
+      >
+        Create thread for this ticket
+      </b-form-checkbox>
+    </b-form-group>
+
       <br />
       <br />
       <b-button style="margin: 10px" type="submit" variant="primary">Submit</b-button>
@@ -101,6 +111,7 @@ export default {
         tag_2: "",
         tag_3: "",
         attachments: [],
+        create_thread: false,
       },
       user_role: this.$store.getters.get_user_role,
       show: true,
@@ -115,6 +126,12 @@ export default {
     onSubmit(event) {
       if (event && event.preventDefault) {
         event.preventDefault();
+      }
+
+      if (this.form.create_thread) {
+        this.form.create_thread = 1; // Assuming the API expects a boolean value as 1 for true
+      } else {
+        this.form.create_thread = 0; // Assuming the API expects a boolean value as 0 for false
       }
 
       if (this.user_role == "student" && this.form.tags.length == 0 && this.check_title) {

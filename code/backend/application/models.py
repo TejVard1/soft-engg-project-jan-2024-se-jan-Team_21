@@ -55,10 +55,17 @@ class Ticket(db.Model):
     resolved_on = db.Column(
         db.Integer, nullable=True, default=0
     )  # time is stored as a timestamp
+    # has_thread = db.Column(db.Integer, default=0)
+    # thread_id = db.Column(db.String, default="")
 
     def __repr__(self):
         return f"Ticket object for: {self.ticket_id} | {self.title}"
 
+# class Thread(db.Model):
+#     __tablename__ = "thread"
+#     thread_id = db.Column(db.String, primary_key=True)
+#     ticket_id = db.Column(db.String)
+#     is_open = db.Column(db.Integer, default=0)
 
 class TicketAttachment(db.Model):
     __tablename__ = "ticketattachment"

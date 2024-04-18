@@ -73,6 +73,17 @@
                 ></b-button>
               </b-col>
 
+              <b-col class="col" cols="4" sm="12" lg="12">
+                <b-button
+                  @click="viewDiscussion"
+                  variant="primary"
+                  size="sm"
+                  class="ticket-card-buttons view-discussion-button"
+                >
+                  View Discussion
+                </b-button>
+              </b-col>
+
               <b-col class="col" cols="4" sm="12" lg="12"
                 ><b-button
                   @click="showDeleteTicketModal"
@@ -120,6 +131,10 @@
           <tr>
             <td>Description:</td>
             <td>{{ description }}</td>
+          </tr>
+          <tr>
+            <td>thread_id:</td>
+            <td>{{ thread_id }}</td>
           </tr>
           <tr>
             <td>Status:</td>
@@ -259,12 +274,39 @@ export default {
       tag_3: "",
       tags: [],
       attachments: [],
+      //has_thread: 0,
+      // thread_id: "",
       ticket_deleted: false,
     };
   },
   created() {},
   mounted() {},
   methods: {
+    viewDiscussion() {
+  fetch(common.TICKET_API + `/${this.ticket_id}` + `/${this.user_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        web_token: this.$store.getters.get_web_token,
+        user_id: this.user_id,
+      },
+      })
+
+    .then(response => response.json())
+    .then(data => {
+      // Assuming the API response contains a 'redirect_url' field
+      const redirectUrl = data.message.url;
+      
+      // Redirect to the obtained URL
+      window.location.href = redirectUrl;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Handle errors here
+    });
+
+  },
+
     ticketResolvedFn() {
       this.ticket_deleted = true; // its not deletd, its resolved , so its hidden
     },
@@ -302,6 +344,10 @@ export default {
             if (this.tag_3) {
               this.tags.push(this.tag_3);
             }
+
+            // this.has_thread = data.message.has_thread;
+            // this.thread_id = data.message.thread_id;
+            
             this.attachments = data.message.attachments;
           }
           if (data.category == "error") {
@@ -420,5 +466,9 @@ export default {
 .ticket-card-buttons:hover:not([disabled]) {
   border-color: #95ddfa;
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+.view-discussion-button {
+  margin-left: -50px; /* Adjust as needed to align the button */
+  background-color: rgb(32, 22, 166); /* Blue background color */
 }
 </style>

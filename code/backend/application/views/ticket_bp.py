@@ -4,6 +4,10 @@
 # File Info: This is Ticket Blueprint file.
 
 # --------------------  Imports  --------------------
+from json import dumps
+from httplib2 import Http
+import requests
+import json
 
 import hashlib
 import time
@@ -28,6 +32,48 @@ from application.notifications import send_email
 
 # --------------------  Code  --------------------
 
+import re
+
+def replace_spaces_with_hyphens(input_string):
+    # Replace consecutive spaces with a single hyphen using a regular expression
+    return re.sub(r'\s+', '-', input_string)
+
+ticket_thread_map = dict()
+
+def discourse_thread(form):
+    endpoint = "http://localhost:4200/posts.json"
+    payload = {
+        "title": form.get("title",""),
+        "raw": form.get("description", ""),
+        "category": 4,
+    }
+    payload_json = json.dumps(payload)
+    headers = {
+        "Content-Type": "application/json",
+        "Api-Key": "377c93778a3fb6574592b2c9181ed9a92b1add01dc07a5fa6fd3385a3c128a9e",  # Replace with your Discourse API key
+        "Api-Username": "1210tej",  # Replace with your Discourse username
+    }
+    response = requests.post(endpoint, data=payload_json, headers=headers)
+    if response.status_code == 200:
+        print("Post created successfully.")
+    else:
+        print("Failed to create post. Status code:", response.status_code)
+        print("Error response:", response.text)
+
+    return response
+
+
+def invoke_webhook(ticket_id):
+        url = "https://chat.googleapis.com/v1/spaces/AAAASeEte_g/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=zhyMDnNBHH8KntyqSywGd84CIQ-VjuZXQtnGtA1LxpE"
+        app_message = {"text": "message from teja's laptop"}
+        message_headers = {"Content-Type": "application/json; charset=UTF-8"}
+        http_obj = Http()
+        response = http_obj.request(
+            uri=url,
+            method="POST",
+            headers=message_headers,
+            body=dumps(app_message),
+        )
 
 class TicketUtils(UserUtils):
     def __init__(self, user_id=None):
@@ -283,6 +329,13 @@ class TicketAPI(Resource):
                     # the ticket and its user are matched or its a support staff
                     # convert to list of dict
                     ticket_dict = ticket_utils.convert_ticket_to_dict(ticket)
+                    if ticket_id in ticket_thread_map:
+                        threadId = ticket_thread_map[ticket_id][1]
+                        title = ticket_thread_map[ticket_id][2]
+                        ticket_dict["url"] = "http://localhost:4200/t/" + str(title) + "/"+ str(threadId)
+                    else:
+                        ticket_dict["url"] = "https://www.google.com/404"
+
                     return success_200_custom(data=ticket_dict)
             else:
                 raise NotFoundError(status_msg="Ticket does not exists")
@@ -330,6 +383,11 @@ class TicketAPI(Resource):
         # get form data
         try:
             form = request.get_json()
+            ########################### debug logging
+            lines = [str(form)]
+            with open('debug_logging.txt', 'w') as file:
+                file.writelines(lines)  # Write the modified lines back to the file
+            ###########################
             attachments = form.get("attachments", [])
             for key in details:
                 value = form.get(key, "")
@@ -356,6 +414,20 @@ class TicketAPI(Resource):
             try:
                 db.session.add(ticket)
                 db.session.commit()
+                if form.get("priority","") == "high":
+                    invoke_webhook(ticket_id)
+                if form.get("create_thread", "") == 1:
+                    response = discourse_thread(form)
+                    response_dict = response.json()
+                    if response.status_code == 200:
+                        title = form.get("title", "")
+                        title_upd = replace_spaces_with_hyphens(title)
+                        ticket_thread_map[ticket_id] = (user_id, response_dict["id"], title_upd)
+                    # else:
+                    #     raise BadRequest(
+                    #         status_msg= str(response_dict["errors"])
+                    #     )
+
             except Exception as e:
                 logger.error(
                     f"TicketAPI->post : Error occured while creating a new ticket : {e}"
@@ -370,6 +442,10 @@ class TicketAPI(Resource):
                 status, message = ticket_utils.save_ticket_attachments(
                     attachments, ticket_id, user_id, operation="create_ticket"
                 )
+                if(details["priority"] == "high"):
+                    message += "\nNotification raised on Gchat"
+                if(form.get("create_thread", "") == 1):
+                    message += "Thread has been created on the discourse"
                 raise Success_200(status_msg=f"Ticket created successfully. {message}")
 
     @token_required
