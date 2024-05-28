@@ -72,7 +72,17 @@
                   ></b-icon
                 ></b-button>
               </b-col>
-
+              <b-col class="col" cols="4" sm="12" lg="12">
+              <b-button
+                @click="CloseThreadButton"
+                variant="primary"
+                size="sm"
+                class="ticket-card-buttons CloseThreadButton"
+              >
+                Close Thread
+              </b-button>
+            </b-col>
+            
               <b-col class="col" cols="4" sm="12" lg="12">
                 <b-button
                   @click="viewDiscussion"
@@ -471,4 +481,12 @@ export default {
   margin-left: -50px; /* Adjust as needed to align the button */
   background-color: rgb(32, 22, 166); /* Blue background color */
 }
+
+.CloseThreadButton{
+  margin-left: -50px; /* Adjust as needed to align the button */
+  background-color: rgb(202, 44, 134); /* Blue background color */
+
+}
 </style>
+
+

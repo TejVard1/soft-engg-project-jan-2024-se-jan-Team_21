@@ -65,7 +65,7 @@ def discourse_thread(form):
 
 def invoke_webhook(ticket_id):
         url = "https://chat.googleapis.com/v1/spaces/AAAASeEte_g/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=zhyMDnNBHH8KntyqSywGd84CIQ-VjuZXQtnGtA1LxpE"
-        app_message = {"text": "message from teja's laptop"}
+        app_message = {"text": f"Ticket ID : {ticket_id} requires IMMEDIATE assistance!"}
         message_headers = {"Content-Type": "application/json; charset=UTF-8"}
         http_obj = Http()
         response = http_obj.request(
@@ -329,12 +329,19 @@ class TicketAPI(Resource):
                     # the ticket and its user are matched or its a support staff
                     # convert to list of dict
                     ticket_dict = ticket_utils.convert_ticket_to_dict(ticket)
+
                     if ticket_id in ticket_thread_map:
                         threadId = ticket_thread_map[ticket_id][1]
                         title = ticket_thread_map[ticket_id][2]
                         ticket_dict["url"] = "http://localhost:4200/t/" + str(title) + "/"+ str(threadId)
                     else:
                         ticket_dict["url"] = "https://www.google.com/404"
+
+                    ########################### debug logging
+                    lines = [str(ticket_thread_map)]
+                    with open('debug_logging.txt', 'w') as file:
+                        file.writelines(lines)  # Write the modified lines back to the file
+                    ###########################
 
                     return success_200_custom(data=ticket_dict)
             else:
@@ -383,11 +390,6 @@ class TicketAPI(Resource):
         # get form data
         try:
             form = request.get_json()
-            ########################### debug logging
-            lines = [str(form)]
-            with open('debug_logging.txt', 'w') as file:
-                file.writelines(lines)  # Write the modified lines back to the file
-            ###########################
             attachments = form.get("attachments", [])
             for key in details:
                 value = form.get(key, "")
@@ -410,7 +412,7 @@ class TicketAPI(Resource):
             details["created_by"] = user_id
             details["created_on"] = int(time.time())
             ticket = Ticket(**details)
-
+            error_creating_thread = 0
             try:
                 db.session.add(ticket)
                 db.session.commit()
@@ -422,11 +424,10 @@ class TicketAPI(Resource):
                     if response.status_code == 200:
                         title = form.get("title", "")
                         title_upd = replace_spaces_with_hyphens(title)
-                        ticket_thread_map[ticket_id] = (user_id, response_dict["id"], title_upd)
-                    # else:
-                    #     raise BadRequest(
-                    #         status_msg= str(response_dict["errors"])
-                    #     )
+                        ticket_thread_map[ticket_id] = (user_id, response_dict["topic_id"], title_upd)
+
+                    else:
+                        error_creating_thread = 1
 
             except Exception as e:
                 logger.error(
@@ -446,6 +447,8 @@ class TicketAPI(Resource):
                     message += "\nNotification raised on Gchat"
                 if(form.get("create_thread", "") == 1):
                     message += "Thread has been created on the discourse"
+                if(error_creating_thread == 1 and form.get("create_thread", "") == 1):
+                    message = "Ticket created. ERROR creating THREAD on discourse"
                 raise Success_200(status_msg=f"Ticket created successfully. {message}")
 
     @token_required
@@ -547,6 +550,32 @@ class TicketAPI(Resource):
 
                     db.session.add(ticket)
                     db.session.commit()
+                    error_creating_thread = 0
+
+                    if form.get("priority","") == "high":
+                        invoke_webhook(ticket_id)
+                    if form.get("create_thread", "") == 1:
+                        response = discourse_thread(form)
+                        response_dict = response.json()
+
+                        if response.status_code == 200:
+                            title = form.get("title", "")
+                            title_upd = replace_spaces_with_hyphens(title)
+                            ticket_thread_map[ticket_id] = (user_id, response_dict["topic_id"], title_upd)
+
+                            ########################### debug logging
+                            lines = [str(ticket_thread_map)]
+                            with open('debug_logging2.txt', 'w') as file:
+                                file.writelines(lines)  # Write the modified lines back to the file
+                            ###########################
+
+                        else:
+                            error_creating_thread = 1
+                            ########################### debug logging
+                            lines = ["error creating thread"]
+                            with open('debug_logging2.txt', 'w') as file:
+                                file.writelines(lines)  # Write the modified lines back to the file
+                            ###########################
 
                     raise Success_200(status_msg="Successfully updated a ticket.")
 
